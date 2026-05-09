@@ -75,12 +75,80 @@
             100% { opacity: 0; transform: translateY(-50px) scale(2); }
         }
 
+        /* --- Floating Photos with Tags --- */
+        .floating-photo-wrapper {
+            position: absolute;
+            background: white;
+            padding: 6px 6px 20px 6px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            animation: floatPhoto 6s ease-in-out infinite;
+            cursor: pointer;
+            transition: z-index 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .floating-photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+        .photo-tag {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.8rem;
+            color: #e11d48;
+            margin-top: 6px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.1;
+        }
+        @keyframes floatPhoto {
+            0% { transform: translateY(0px) rotate(var(--rot)); }
+            50% { transform: translateY(-15px) rotate(calc(var(--rot) + 5deg)); }
+            100% { transform: translateY(0px) rotate(var(--rot)); }
+        }
+
+        /* --- Responsive Photo Scattering --- */
+        /* Default is Mobile View */
+        .photo-1 { top: 4%; left: 2%; --rot: -12deg; animation-delay: 0s; z-index: 15; }
+        .photo-2 { bottom: 6%; left: 4%; --rot: 15deg; animation-delay: 1.5s; z-index: 15; }
+        .photo-3 { top: 10%; right: 2%; --rot: 8deg; animation-delay: 0.8s; z-index: 15; }
+        .photo-4 { bottom: 10%; right: 4%; --rot: -10deg; animation-delay: 2.2s; z-index: 15; }
+        
+        /* Bring middle photos IN FRONT of the card on mobile for 3D effect */
+        .photo-5 { top: 40%; left: -2%; --rot: -20deg; animation-delay: 3s; z-index: 25; }
+        .photo-6 { top: 55%; right: -2%; --rot: 18deg; animation-delay: 1.2s; z-index: 25; }
+
+        /* Desktop View Adjustments */
+        @media (min-width: 768px) {
+            .photo-1 { top: 12%; left: 15%; }
+            .photo-2 { bottom: 15%; left: 10%; }
+            .photo-3 { top: 18%; right: 18%; }
+            .photo-4 { bottom: 20%; right: 12%; }
+            /* Push middle photos back behind the card on larger screens */
+            .photo-5 { top: 45%; left: 5%; z-index: 15; }
+            .photo-6 { top: 50%; right: 4%; z-index: 15; }
+        }
+
+        /* Cute Pop Animation on Click/Touch */
+        .photo-pop {
+            animation: popWiggle 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+            z-index: 50 !important;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        @keyframes popWiggle {
+            0% { transform: scale(1) rotate(var(--rot)); }
+            50% { transform: scale(1.4) rotate(calc(var(--rot) - 5deg)); }
+            100% { transform: scale(1.5) rotate(0deg); }
+        }
+
         /* Floating Hearts */
         .heart {
             position: fixed;
             top: -10vh;
             animation: fall 4s linear forwards;
-            z-index: 50;
+            z-index: 100;
             pointer-events: none;
         }
         @keyframes fall {
@@ -88,9 +156,7 @@
         }
 
         /* Button Pulse */
-        .btn-pulse {
-            animation: btnPulse 2s infinite;
-        }
+        .btn-pulse { animation: btnPulse 2s infinite; }
         @keyframes btnPulse {
             0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4); }
             70% { box-shadow: 0 0 0 15px rgba(225, 29, 72, 0); }
@@ -99,6 +165,14 @@
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- AUDIO FILES (Update the src links to your actual MP3 files) -->
+    <audio id="audio-romantic" loop>
+        <source src="your-romantic-song.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="audio-birthday" loop>
+        <source src="your-birthday-song.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- SCREEN 1: The Envelope -->
     <div id="screen-envelope" class="screen flex flex-col items-center justify-center w-full min-h-[80vh] z-20 cursor-pointer">
@@ -119,9 +193,42 @@
         </div>
     </div>
 
-    <!-- SCREEN 2: The Cake (Initially Hidden) -->
-    <div id="screen-cake" class="screen hidden flex-col items-center justify-center w-full max-w-2xl mx-auto min-h-[80vh]">
-        <section class="bg-white/70 backdrop-blur-lg p-6 md:p-12 rounded-[2.5rem] shadow-xl border border-white text-center w-full">
+    <!-- SCREEN 2: The Cake with Interactive Floating Photos -->
+    <div id="screen-cake" class="screen hidden relative flex-col items-center justify-center w-full max-w-5xl mx-auto min-h-[90vh] overflow-hidden md:overflow-visible">
+        
+        <!-- Scattered Interactive Photos -->
+        <div class="floating-photo-wrapper photo-1 w-20 md:w-32">
+            <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=200" alt="Memory">
+            <span class="photo-tag">That smile!</span>
+        </div>
+
+        <div class="floating-photo-wrapper photo-2 w-24 md:w-36">
+            <img src="https://images.unsplash.com/photo-1606905584573-ce255f053538?auto=format&fit=crop&q=80&w=200" alt="Memory">
+            <span class="photo-tag">Our trip 🌊</span>
+        </div>
+
+        <div class="floating-photo-wrapper photo-3 w-16 md:w-28">
+            <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80&w=200" alt="Memory">
+            <span class="photo-tag">My fav ❤️</span>
+        </div>
+
+        <div class="floating-photo-wrapper photo-4 w-20 md:w-32">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200" alt="Memory">
+            <span class="photo-tag">Cutie ✨</span>
+        </div>
+
+        <div class="floating-photo-wrapper photo-5 w-20 md:w-28">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="Memory">
+            <span class="photo-tag">Beautiful</span>
+        </div>
+
+        <div class="floating-photo-wrapper photo-6 w-20 md:w-32">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=200" alt="Memory">
+            <span class="photo-tag">Forever 💕</span>
+        </div>
+
+        <!-- Main Cake Container -->
+        <section class="bg-white/80 backdrop-blur-md p-6 md:p-12 rounded-[2.5rem] shadow-2xl border border-white/50 text-center w-[88%] md:w-full max-w-xl z-20 relative mt-12 md:mt-0">
             <h1 class="text-3xl md:text-5xl text-rose-600 mb-4 md:mb-6 cute-font drop-shadow-sm">Happy Birthday, Love! 💖</h1>
             
             <div class="relative w-48 h-48 mx-auto mt-6 mb-4 transform scale-90 md:scale-100">
@@ -137,35 +244,34 @@
             
             <p id="cake-msg" class="text-gray-600 font-semibold mt-4 text-sm md:text-base px-4">Tap the candle to make a wish & blow it out!</p>
             
-            <!-- Hidden Next Button -->
-            <button id="btn-next-timeline" class="hidden mt-8 mx-auto bg-gradient-to-r from-rose-400 to-pink-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 btn-pulse">
+            <button id="btn-next-timeline" class="hidden mt-8 mx-auto bg-gradient-to-r from-rose-400 to-pink-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 btn-pulse z-30 relative">
                 See Our Journey ➔
             </button>
         </section>
     </div>
 
-    <!-- SCREEN 3: The Timeline (Initially Hidden) -->
-    <div id="screen-timeline" class="screen hidden flex-col items-center justify-center w-full max-w-2xl mx-auto min-h-[80vh] py-8">
+    <!-- SCREEN 3: The Timeline -->
+    <div id="screen-timeline" class="screen hidden flex-col items-center justify-center w-full max-w-2xl mx-auto min-h-[80vh] py-8 z-20 relative">
         <section class="bg-white/70 backdrop-blur-lg p-6 md:p-12 rounded-[2.5rem] shadow-xl border border-white w-full">
             <h2 class="text-2xl md:text-3xl text-rose-500 text-center mb-8 cute-font">Our Beautiful Journey 🕰️</h2>
             
             <div class="relative border-l-4 border-rose-300 ml-2 md:ml-8 space-y-8 py-2">
                 <div class="relative pl-6 md:pl-10">
-                    <div class="absolute -left-[14px] md:-left-[14px] top-1 w-6 h-6 bg-rose-500 rounded-full border-4 border-white shadow-md"></div>
+                    <div class="absolute -left-[14px] top-1 w-6 h-6 bg-rose-500 rounded-full border-4 border-white shadow-md"></div>
                     <h3 class="text-lg md:text-xl font-bold text-gray-800 cute-font">The Day We Met</h3>
                     <p class="text-xs md:text-sm text-rose-400 font-semibold mb-1">August 14, 2024</p>
                     <p class="text-sm md:text-base text-gray-600">The moment you smiled, I knew my life was about to change forever.</p>
                 </div>
 
                 <div class="relative pl-6 md:pl-10">
-                    <div class="absolute -left-[14px] md:-left-[14px] top-1 w-6 h-6 bg-rose-500 rounded-full border-4 border-white shadow-md"></div>
+                    <div class="absolute -left-[14px] top-1 w-6 h-6 bg-rose-500 rounded-full border-4 border-white shadow-md"></div>
                     <h3 class="text-lg md:text-xl font-bold text-gray-800 cute-font">Our First Date</h3>
                     <p class="text-xs md:text-sm text-rose-400 font-semibold mb-1">September 2, 2024</p>
                     <p class="text-sm md:text-base text-gray-600">Coffee, endless conversations, and realizing I never wanted the night to end.</p>
                 </div>
 
                 <div class="relative pl-6 md:pl-10">
-                    <div class="absolute -left-[14px] md:-left-[14px] top-1 w-6 h-6 bg-rose-500 rounded-full border-4 border-white shadow-md"></div>
+                    <div class="absolute -left-[14px] top-1 w-6 h-6 bg-rose-500 rounded-full border-4 border-white shadow-md"></div>
                     <h3 class="text-lg md:text-xl font-bold text-gray-800 cute-font">Today</h3>
                     <p class="text-xs md:text-sm text-rose-400 font-semibold mb-1">Celebrating You</p>
                     <p class="text-sm md:text-base text-gray-600">Watching you grow and smiling with you is my favorite thing in the world.</p>
@@ -180,8 +286,8 @@
         </section>
     </div>
 
-    <!-- SCREEN 4: The Gallery (Initially Hidden) -->
-    <div id="screen-gallery" class="screen hidden flex-col items-center justify-center w-full max-w-4xl mx-auto min-h-[80vh] py-8 pb-20">
+    <!-- SCREEN 4: The Gallery -->
+    <div id="screen-gallery" class="screen hidden flex-col items-center justify-center w-full max-w-4xl mx-auto min-h-[80vh] py-8 pb-20 z-20 relative">
         <section class="bg-white/70 backdrop-blur-lg p-6 md:p-12 rounded-[2.5rem] shadow-xl border border-white w-full">
             <h2 class="text-2xl md:text-3xl text-rose-500 text-center mb-8 cute-font">Moments I Treasure 📸</h2>
             
@@ -210,7 +316,24 @@
 
     <script>
         $(document).ready(function() {
-            // Helper function to transition between screens
+            // Audio elements
+            const audioRomantic = document.getElementById('audio-romantic');
+            const audioBirthday = document.getElementById('audio-birthday');
+            
+            // Set base volumes (so it's soft background music)
+            audioRomantic.volume = 0.5;
+            audioBirthday.volume = 0.5;
+
+            // Audio Crossfade helper function
+            function crossfadeAudio(fadeOutElem, fadeInElem) {
+                $(fadeOutElem).animate({volume: 0}, 1000, function() {
+                    fadeOutElem.pause();
+                });
+                fadeInElem.volume = 0;
+                fadeInElem.play().catch(e => console.log("Audio play blocked"));
+                $(fadeInElem).animate({volume: 0.5}, 1000);
+            }
+
             function transitionToScreen(hideId, showId) {
                 $(hideId).fadeOut(500, function() {
                     $(showId).removeClass('hidden').css('display', 'flex').hide().fadeIn(800);
@@ -224,10 +347,18 @@
                 if (envelopeState === 0) {
                     $('#envelope').addClass('open-envelope');
                     envelopeState = 1;
+                    
+                    // Start Romantic Music on very first interaction!
+                    audioRomantic.play().catch(e => console.log("Autoplay blocked, waiting for another click"));
+                    
                     setTimeout(() => { $(this).find('h1').text("Read it, then tap again..."); }, 800);
                 } else if (envelopeState === 1) {
                     transitionToScreen('#screen-envelope', '#screen-cake');
                     startHeartShower();
+                    
+                    // Crossfade to Birthday song for the Cake screen
+                    crossfadeAudio(audioRomantic, audioBirthday);
+                    
                     envelopeState = 2;
                 }
             });
@@ -239,22 +370,55 @@
                     $('.smoke').show();
                     $('#cake-msg').html("Yay! Your wish is coming true! 🎉").css('color', '#e11d48');
                     
-                    // Show next button after blowing candle
                     setTimeout(() => {
                         $('#btn-next-timeline').removeClass('hidden').hide().fadeIn(500);
                     }, 800);
 
-                    // Extra burst of hearts
                     for(let i=0; i<15; i++) { setTimeout(createHeart, i * 100); }
                 }
             });
 
-            // Screen 2 to Screen 3
-            $('#btn-next-timeline').click(function() {
-                transitionToScreen('#screen-cake', '#screen-timeline');
+            // --- Interactive Photo Logic ---
+            $('.floating-photo-wrapper').on('click touchstart', function(e) {
+                e.preventDefault(); 
+                
+                if ($(this).hasClass('photo-pop')) {
+                    $(this).removeClass('photo-pop');
+                } else {
+                    $('.floating-photo-wrapper').removeClass('photo-pop');
+                    $(this).addClass('photo-pop');
+                    
+                    let tapX = e.pageX || (e.originalEvent.touches && e.originalEvent.touches[0].pageX);
+                    let tapY = e.pageY || (e.originalEvent.touches && e.originalEvent.touches[0].pageY);
+                    
+                    if(tapX && tapY) {
+                        const heart = $('<div class="heart z-50">💕</div>');
+                        heart.css({
+                            left: tapX + 'px',
+                            top: tapY + 'px',
+                            fontSize: '2rem',
+                            animation: 'fall 1.5s linear forwards'
+                        });
+                        $('body').append(heart);
+                        setTimeout(() => { heart.remove(); }, 1500);
+                    }
+                }
             });
 
-            // Screen 3 to Screen 4
+            $(document).on('click touchstart', function(e) {
+                if (!$(e.target).closest('.floating-photo-wrapper').length) {
+                    $('.floating-photo-wrapper').removeClass('photo-pop');
+                }
+            });
+
+            // Screen 2 to Screen 3 (Cake to Timeline)
+            $('#btn-next-timeline').click(function() {
+                transitionToScreen('#screen-cake', '#screen-timeline');
+                // Crossfade back to Romantic song for the rest of the journey
+                crossfadeAudio(audioBirthday, audioRomantic);
+            });
+
+            // Screen 3 to Screen 4 (Timeline to Gallery)
             $('#btn-next-gallery').click(function() {
                 transitionToScreen('#screen-timeline', '#screen-gallery');
             });
@@ -275,7 +439,7 @@
                 let heartInterval = setInterval(createHeart, 150);
                 setTimeout(() => {
                     clearInterval(heartInterval);
-                    setInterval(createHeart, 1500); // Slower background hearts
+                    setInterval(createHeart, 1500); 
                 }, 3000);
             }
         });
